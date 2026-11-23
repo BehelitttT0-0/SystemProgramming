@@ -9,9 +9,9 @@ lock_b = ("B", threading.Lock())
 def worker(name, first, second):
     with first[1]:
         print(f"{name}: взял замок {first[0]}")
-        time.sleep(0.5)  # даём второму потоку успеть взять свой замок
+        time.sleep(0.5)
         print(f"{name}: жду замок {second[0]}...")
-        # timeout нужен только чтобы демонстрация не зависла навсегда
+        
         if second[1].acquire(timeout=2):
             try:
                 print(f"{name}: взял оба замка, работаю")
@@ -19,8 +19,7 @@ def worker(name, first, second):
                 second[1].release()
         else:
             print(f"{name}: ДЕДЛОК! замок {second[0]} так и не освободился")
-            time.sleep(0.5)  # держим свой замок, пока второй поток тоже не сдастся
-
+            time.sleep(0.5)
 
 def run(order1, order2, title):
     print(f"--- {title} ---")
@@ -31,8 +30,6 @@ def run(order1, order2, title):
     print()
 
 
-# Перекрёстный захват: поток 1 берёт A затем B, поток 2 берёт B затем A
 run((lock_a, lock_b), (lock_b, lock_a), "Дедлок: разный порядок захвата")
 
-# Решение: оба потока берут замки строго в одном порядке (сначала A, потом B)
 run((lock_a, lock_b), (lock_a, lock_b), "Решение: одинаковый порядок захвата")

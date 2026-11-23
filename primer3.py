@@ -6,10 +6,9 @@ locker = threading.Lock()
 
 
 def update_rates(name):
-    # аналог Monitor.TryEnter(locker, 500, ref lockTaken): ждём не больше 0,5 с
     lock_taken = locker.acquire(timeout=0.5)
     if not lock_taken:
-        print(f"{name}: ресурс занят, беру курсы из кэша")  # запасной план (fallback)
+        print(f"{name}: ресурс занят, беру курсы из кэша")
         return
     try:
         print(f"{name}: захватил замок, обновляю курсы...")

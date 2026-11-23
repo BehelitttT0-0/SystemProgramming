@@ -5,27 +5,26 @@ import time
 THREADS = 8
 INCREMENTS = 5_000
 counter = 0
-gate = threading.Lock()  # объект-замок (аналог private readonly object _gate)
-
+gate = threading.Lock()
 
 def unsafe_worker():
     global counter
     for _ in range(INCREMENTS):
-        value = counter      # 1. прочитать
-        time.sleep(0)        # отдаём процессор другому потоку (делает гонку заметной)
-        counter = value + 1  # 2-3. прибавить 1 и записать
+        value = counter
+        time.sleep(0)
+        counter = value + 1
 
 
 def safe_worker():
     global counter
     for _ in range(INCREMENTS):
-        gate.acquire()               # Monitor.Enter(_gate)
+        gate.acquire()
         try:
             value = counter
             time.sleep(0)
             counter = value + 1
         finally:
-            gate.release()           # Monitor.Exit(_gate)
+            gate.release()
 
 
 def run(worker, title):

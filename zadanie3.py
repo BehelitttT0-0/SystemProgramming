@@ -2,9 +2,9 @@
 import threading
 import time
 
-BACKUP_TIME = 1.2   # создание бэкапа, секунды (1200 мс)
-INTERVAL = 0.5      # период таймера, секунды (500 мс)
-TRIGGERS = 6        # сколько раз сработает таймер
+BACKUP_TIME = 1.2
+INTERVAL = 0.5
+TRIGGERS = 6
 
 locker = threading.Lock()
 t0 = time.perf_counter()
@@ -15,7 +15,6 @@ def now():
 
 
 def run_backup(n):
-    # аналог Monitor.TryEnter(locker, 0, ref lockTaken): не ждём ни миллисекунды
     lock_taken = locker.acquire(blocking=False)
     if not lock_taken:
         print(f"[{now()}] Бэкап №{n} пропущен: предыдущий ещё идёт")
@@ -25,7 +24,7 @@ def run_backup(n):
         time.sleep(BACKUP_TIME)
         print(f"[{now()}] Бэкап №{n} завершён")
     finally:
-        locker.release()   # замок откроется, даже если при записи будет сбой
+        locker.release()
 
 
 threads = []

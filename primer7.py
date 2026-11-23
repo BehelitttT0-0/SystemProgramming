@@ -4,10 +4,10 @@ import threading
 import time
 
 TASKS = 6
-DELAY = 1  # длительность одной задачи, секунды
-SLOTS = 3  # сколько задач пускаем одновременно
+DELAY = 1
+SLOTS = 3
 
-# ---------- Часть 1. Обычный lock: пускает по одному ----------
+# Часть 1. Обычный lock: пускает по одному
 my_lock = threading.Lock()
 
 
@@ -30,15 +30,15 @@ def run_lock():
     print(f"Время с lock: {time.perf_counter() - start:.1f} с\n")
 
 
-# ---------- Часть 2. Semaphore: пускает пачками по 3 ----------
+# Часть 2. Semaphore: пускает пачками по 3
 async def process_data_async(n, semaphore):
-    await semaphore.acquire()          # аналог WaitAsync()
+    await semaphore.acquire()
     try:
         print(f"Задача {n}: ВОШЛА и работает")
         await asyncio.sleep(DELAY)
         print(f"Задача {n}: ВЫШЛА")
     finally:
-        semaphore.release()            # аналог Release()
+        semaphore.release()
 
 
 async def run_semaphore():

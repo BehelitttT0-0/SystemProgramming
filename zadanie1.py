@@ -4,8 +4,8 @@ import threading
 THREADS = 10
 RECORDS_PER_THREAD = 1000
 
-audit_log = []                  # общий список
-log_lock = threading.Lock()     # замок для списка
+audit_log = []
+log_lock = threading.Lock()
 
 
 def write_operations(thread_id):

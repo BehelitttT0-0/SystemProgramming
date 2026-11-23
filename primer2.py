@@ -8,9 +8,9 @@ locker = threading.Lock()
 
 def withdraw_unsafe(name, amount):
     global balance
-    if balance >= amount:        # проверка
-        time.sleep(0.1)          # имитация обращения к банку
-        balance -= amount        # списание
+    if balance >= amount:
+        time.sleep(0.1)
+        balance -= amount
         print(f"{name}: снял {amount}, остаток {balance}")
     else:
         print(f"{name}: недостаточно средств (остаток {balance})")
@@ -18,7 +18,7 @@ def withdraw_unsafe(name, amount):
 
 def withdraw_safe(name, amount):
     global balance
-    locker.acquire()             # Monitor.Enter(locker)
+    locker.acquire()
     try:
         if balance >= amount:
             time.sleep(0.1)
@@ -27,7 +27,7 @@ def withdraw_safe(name, amount):
         else:
             print(f"{name}: недостаточно средств (остаток {balance})")
     finally:
-        locker.release()         # Monitor.Exit(locker)
+        locker.release()
 
 
 def run(func, title):

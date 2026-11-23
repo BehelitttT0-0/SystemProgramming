@@ -6,14 +6,14 @@ import time
 ATTEMPTS = 8
 lock_a = threading.Lock()
 lock_b = threading.Lock()
-start_gate = threading.Barrier(2)  # оба потока стартуют одновременно
+start_gate = threading.Barrier(2)
 
 
 def worker(name, first, second, jitter):
     start_gate.wait()
     for attempt in range(1, ATTEMPTS + 1):
         first.acquire()
-        time.sleep(0.1)  # оба потока успевают взять свой первый ресурс
+        time.sleep(0.1)
         if second.acquire(blocking=False):
             try:
                 print(f"{name}: взял оба ресурса и работает (попытка {attempt})")
@@ -22,9 +22,8 @@ def worker(name, first, second, jitter):
                 first.release()
             return
         print(f"{name}: попытка {attempt} - ресурс занят, уступаю")
-        time.sleep(0.05)  # уступаем не мгновенно: второй поток тоже успевает отступить
+        time.sleep(0.05)
         first.release()
-        # без jitter - одинаковая пауза, с jitter - случайная
         time.sleep(random.uniform(0.05, 0.6) if jitter else 0.2)
     print(f"{name}: ЛАЙВЛОК - за {ATTEMPTS} попыток так и не вошёл")
 

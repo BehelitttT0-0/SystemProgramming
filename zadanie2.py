@@ -4,9 +4,9 @@ import time
 from collections import deque
 
 mail_queue = deque()
-cond = threading.Condition()   # монитор с Wait/Pulse
+cond = threading.Condition()
 running = True
-empty_checks = 0               # холостые пробуждения без письма
+empty_checks = 0
 
 
 def email_worker():
@@ -14,11 +14,11 @@ def email_worker():
     while True:
         with cond:
             while not mail_queue and running:
-                cond.wait()                      # Monitor.Wait: спим, CPU не тратим
+                cond.wait()
                 if not mail_queue and running:
-                    empty_checks += 1            # проснулись зря
+                    empty_checks += 1
             if not mail_queue and not running:
-                return                           # очередь пуста и работа закончена
+                return
             letter = mail_queue.popleft()
         print(f"Отправлено письмо: {letter}")
 
@@ -26,7 +26,7 @@ def email_worker():
 def add_letter(text):
     with cond:
         mail_queue.append(text)
-        cond.notify()                            # Monitor.Pulse: будим воркера
+        cond.notify()
     print(f"Принято письмо: {text}")
 
 
@@ -38,11 +38,11 @@ for i in range(1, 4):
     time.sleep(0.5)
     add_letter(f"Письмо №{i}")
 
-time.sleep(2 - (time.perf_counter() - start))   # всего работаем 2 секунды
+time.sleep(2 - (time.perf_counter() - start))
 
 with cond:
     running = False
-    cond.notify_all()                            # будим воркера для завершения
+    cond.notify_all()
 worker.join()
 
 print(f"Холостых проверок (emptyChecks): {empty_checks}")

@@ -7,17 +7,17 @@ from collections import deque
 class BlockingQueue:
     def __init__(self):
         self._queue = deque()
-        self._cond = threading.Condition()  # монитор с Wait/Pulse
+        self._cond = threading.Condition()
 
     def enqueue(self, item):
         with self._cond:
             self._queue.append(item)
-            self._cond.notify()             # Monitor.Pulse - будим потребителя
+            self._cond.notify()
 
     def dequeue(self):
         with self._cond:
-            while not self._queue:          # именно while, а не if
-                self._cond.wait()           # Monitor.Wait - спим, пока пусто
+            while not self._queue:
+                self._cond.wait()
             return self._queue.popleft()
 
 
@@ -30,7 +30,7 @@ def producer():
         order = f"Заказ №{i}"
         print(f"Производитель: добавил {order}")
         queue.enqueue(order)
-    queue.enqueue(None)  # сигнал "работа закончена"
+    queue.enqueue(None)
 
 
 def consumer():
